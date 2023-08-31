@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border: 2px solid rgb(0, 21, 255);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            animation: neon-glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neon-glow {
+            from {
+                border-color: rgb(0, 21, 255);
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            }
+            to {
+                border-color: blue;
+                box-shadow: 0px 0px 15px rgb(0, 21, 255);
+            }
+        }
+        
+        h1 {
+            color: rgb(0, 21, 255);
+            margin-top: 0;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 7px;
+            margin: 11px 0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: rgb(0, 21, 255);
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: black;
+        }
+        #shortUrl {
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        async function shortenUrl() {
+            var originalUrl = document.getElementById('originalUrl').value;
+
+            try {
+                var response = await fetch('https://api.shrtco.de/v2/shorten?url=' + originalUrl);
+                var data = await response.json();
+
+                if (data.ok) {
+                    var shortUrl = data.result.short_link;
+                    document.getElementById('shortUrl').innerHTML = shortUrl;
+                } else {
+                    document.getElementById('shortUrl').innerHTML = 'Failed to shorten URL.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('shortUrl').innerHTML = 'An error occurred while shortening the URL.';
+            }
+        }
+
+        function copyToClipboard() {
+            var shortUrl = document.getElementById("shortUrl").textContent;
+            var tempElement = document.createElement("textarea");
+            tempElement.value = shortUrl;
+            document.body.appendChild(tempElement);
+            tempElement.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempElement);
+            alert("Shortened URL copied to clipboard!");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>URL Shortener</h1>
+        <label for="originalUrl">Enter the URL:</label>
+        <input type="text" id="originalUrl" required>
+        <button onclick="shortenUrl()">Shorten</button>
+        <p id="shortUrl"></p>
+        <button onclick="copyToClipboard()">Copy URL</button>
+    </div>
+</body>
+</html>
